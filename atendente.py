@@ -1,4 +1,5 @@
 import os
+import time
 from flask import Flask, request, jsonify
 from google import genai
 
@@ -45,23 +46,27 @@ def webhook():
             "message": "Variável GEMINI_API_KEY não encontrada no servidor."
         }), 500
 
-    try:
-        # Chamada direta e compatível com gemini-3.8-flash
-        response = client.models.generate_content(
-            model="gemini-3.8-flash",
-            contents=f"{SYSTEM_INSTRUCTION}\n\nMensagem do cliente: {user_message}"
-        )
+    # Tenta até 3 vezes em caso de oscilação 503 da API
+    for tentativa in range(3):
+        try:
+            response = client.models.generate_content(
+                model="gemini-3.8-flash",
+                contents=f"{SYSTEM_INSTRUCTION}\n\nMensagem do cliente: {user_message}"
+            )
 
-        return jsonify({
-            "status": "success",
-            "response": response.text
-        }), 200
+            return jsonify({
+                "status": "success",
+                "response": response.text
+            }), 200
 
-    except Exception as e:
-        return jsonify({
-            "status": "error",
-            "details": str(e)
-        }), 500
+        except Exception as e:
+            if "503" in str(e) and tentativa < 2:
+                time.sleep(2)  # Aguarda 2 segundos antes de tentar novamente
+                continue
+            return jsonify({
+                "status": "error",
+                "details": str(e)
+            }), 500
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
