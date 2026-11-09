@@ -48,12 +48,12 @@ def webhook():
 
     try:
         response = client.models.generate_content(
-            model="gemini-2.5-flash",
-            contents=user_message,
-            config=types.GenerateContentConfig(
-                system_instruction=SYSTEM_INSTRUCTION
-            )
+        model="gemini-3.8-flash",
+        contents=user_message,
+        config=types.GenerateContentConfig(
+            system_instruction=SYSTEM_INSTRUCTION
         )
+    )
 
         return jsonify({
             "status": "success",
