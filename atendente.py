@@ -47,9 +47,9 @@ def webhook():
         }), 500
 
     try:
-        # Usando a alias 'gemini-1.5-flash-latest' totalmente aceita na v1beta
+        # Modelo ativo na v1beta da API
         model = genai.GenerativeModel(
-            model_name="gemini-1.5-flash-latest",
+            model_name="gemini-2.5-flash",
             system_instruction=SYSTEM_INSTRUCTION
         )
         
@@ -69,3 +69,4 @@ def webhook():
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
+    
