@@ -1,11 +1,10 @@
 import os
 from flask import Flask, request, jsonify
 from google import genai
-from google.genai import types
 
 app = Flask(__name__)
 
-# Configura o cliente oficial da nova SDK google-genai
+# Instancia o cliente da SDK google-genai
 api_key = os.environ.get("GEMINI_API_KEY")
 client = genai.Client(api_key=api_key) if api_key else None
 
@@ -47,13 +46,11 @@ def webhook():
         }), 500
 
     try:
+        # Chamada direta e compatível com gemini-3.8-flash
         response = client.models.generate_content(
-        model="gemini-3.8-flash",
-        contents=user_message,
-        config=types.GenerateContentConfig(
-            system_instruction=SYSTEM_INSTRUCTION
+            model="gemini-3.8-flash",
+            contents=f"{SYSTEM_INSTRUCTION}\n\nMensagem do cliente: {user_message}"
         )
-    )
 
         return jsonify({
             "status": "success",
