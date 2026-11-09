@@ -1,13 +1,12 @@
 import os
 from flask import Flask, request, jsonify
-import google.generativeai as genai
+from google import genai
 
 app = Flask(__name__)
 
-# Configura a API Key do Gemini
+# Inicializa o cliente do Gemini capturando a GEMINI_API_KEY do ambiente Render
 api_key = os.environ.get("GEMINI_API_KEY")
-if api_key:
-    genai.configure(api_key=api_key)
+client = genai.Client(api_key=api_key) if api_key else None
 
 SYSTEM_INSTRUCTION = """
 Você é a assistente virtual do estúdio de unhas Tati Lopes Nails (@tati_lopesnails).
@@ -40,20 +39,21 @@ def webhook():
     if not user_message:
         return jsonify({"status": "ignored", "reason": "Nenhuma mensagem enviada"}), 200
 
-    if not api_key:
+    if not client:
         return jsonify({
             "status": "error",
             "message": "Variável GEMINI_API_KEY não encontrada no servidor."
         }), 500
 
     try:
-        # Modelo recomendado diretamente pela API no erro 404
-        model = genai.GenerativeModel(
-            model_name="gemini-3.8-flash",
-            system_instruction=SYSTEM_INSTRUCTION
+        # Chamada utilizando a nomenclatura exata suportada
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=user_message,
+            config={
+                "system_instruction": SYSTEM_INSTRUCTION
+            }
         )
-        
-        response = model.generate_content(user_message)
 
         return jsonify({
             "status": "success",
