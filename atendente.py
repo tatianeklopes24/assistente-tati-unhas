@@ -16,18 +16,6 @@ Forneça informações sobre horários disponíveis, serviços de manicure/nail 
 Mantenha o tom simpático, claro e objetivo.
 """
 
-def obter_modelo_disponivel():
-    """Descobre automaticamente qual modelo da API suporta geração de conteúdo."""
-    try:
-        modelos = genai.list_models()
-        for m in modelos:
-            if 'generateContent' in m.supported_generation_methods:
-                # Retorna o primeiro modelo válido encontrado (ex: models/gemini-pro ou models/gemini-1.5-flash)
-                return m.name
-    except Exception as e:
-        print(f"Erro ao listar modelos: {e}")
-    return "models/gemini-pro" # Fallback generico
-
 @app.route('/', methods=['GET'])
 def home():
     return "Servidor da Assistente Tati Lopes Nails está online!", 200
@@ -59,10 +47,9 @@ def webhook():
         }), 500
 
     try:
-        nome_modelo = obter_modelo_disponivel()
-        
+        # Modelo recomendado diretamente pela API no erro 404
         model = genai.GenerativeModel(
-            model_name=nome_modelo,
+            model_name="gemini-3.8-flash",
             system_instruction=SYSTEM_INSTRUCTION
         )
         
@@ -70,7 +57,6 @@ def webhook():
 
         return jsonify({
             "status": "success",
-            "model_used": nome_modelo,
             "response": response.text
         }), 200
 
