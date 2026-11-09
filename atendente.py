@@ -46,9 +46,9 @@ def webhook():
         }), 500
 
     try:
-        # Chamada utilizando a versão oficial estável do modelo
+        # Chamada utilizando o modelo gemini-2.5-flash
         response = client.models.generate_content(
-            model="gemini-2.0-flash",
+            model="gemini-2.5-flash",
             contents=user_message,
             config={
                 "system_instruction": SYSTEM_INSTRUCTION
