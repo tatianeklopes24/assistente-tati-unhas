@@ -47,9 +47,9 @@ def webhook():
         }), 500
 
     try:
-        # Usa o modelo gemini-2.5-flash (compatível e ativo na v1beta)
+        # Usando a alias 'gemini-1.5-flash-latest' totalmente aceita na v1beta
         model = genai.GenerativeModel(
-            model_name="gemini-2.5-flash",
+            model_name="gemini-1.5-flash-latest",
             system_instruction=SYSTEM_INSTRUCTION
         )
         
