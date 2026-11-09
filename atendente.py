@@ -46,9 +46,9 @@ def webhook():
         }), 500
 
     try:
-        # Chamada usando o modelo gemini-2.5-flash com a nova biblioteca
+        # Chamada utilizando a versão oficial estável do modelo
         response = client.models.generate_content(
-            model="gemini-2.5-flash",
+            model="gemini-1.5-flash",
             contents=user_message,
             config={
                 "system_instruction": SYSTEM_INSTRUCTION
@@ -61,7 +61,6 @@ def webhook():
         }), 200
 
     except Exception as e:
-        # Retorna o erro exato retornado pela API para facilitar a depuração
         return jsonify({
             "status": "error",
             "details": str(e)
